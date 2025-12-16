@@ -1,0 +1,146 @@
+[
+    {
+        "id": "c389bddfe0943252",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e97d0c325b4bc1a7",
+        "type": "inject",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 180,
+        "wires": [
+            [
+                "81024f7cc8abe473"
+            ]
+        ]
+    },
+    {
+        "id": "81024f7cc8abe473",
+        "type": "function",
+        "z": "c389bddfe0943252",
+        "name": "activar manualmente",
+        "func": "msg.payload = {alarm:true}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 180,
+        "wires": [
+            [
+                "ab2374cf1ad9b469"
+            ]
+        ]
+    },
+    {
+        "id": "1593d23257725635",
+        "type": "debug",
+        "z": "c389bddfe0943252",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 410,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e3609b8025860e57",
+        "type": "mqtt in",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "topic": "NAPI/SVZ",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f35dc2182fb15a8a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 220,
+        "y": 80,
+        "wires": [
+            [
+                "1593d23257725635"
+            ]
+        ]
+    },
+    {
+        "id": "ab2374cf1ad9b469",
+        "type": "mqtt out",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "topic": "NAPI/SVZ",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f35dc2182fb15a8a",
+        "x": 720,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f35dc2182fb15a8a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

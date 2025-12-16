@@ -96,7 +96,6 @@ void setup() {
   
   // Configuración del botón
   pinMode(buttonPin, INPUT); 
-
   if (accel.init() == false) {
     Serial.println("Error: Acelerómetro");
     while (1);
@@ -115,7 +114,7 @@ void loop() {
   
   // Fórmula del filtro paso bajo
   filteredPulseValue = alpha * oldValue + (1 - alpha) * rawValue;
-  oldValue = filteredPulseValue;
+  oldValue = rawValue;
   
   if (accel.available()) {
     accel.read();
@@ -124,7 +123,7 @@ void loop() {
   }
 
   // --- LECTURA DEL BOTÓN DE PÁNICO ---
-  if (digitalRead(buttonPin) == HIGH) {
+  if (digitalRead(buttonPin) == LOW) {
       sendAlarm("ALERTA_MANUAL"); 
   }
 
@@ -143,11 +142,11 @@ void loop() {
   }
 
   // VISUALIZACIÓN LOCAL (Serial Plotter)
-  Serial.print(rawValue);          
-  Serial.print(",");               
-  Serial.print(filteredPulseValue);
-  Serial.print(",");
-  Serial.println(currentG * 1000); 
+  // Serial.print(rawValue);          
+  // Serial.print(",");               
+  // Serial.print(filteredPulseValue);
+  // Serial.print(",");
+  // Serial.println(currentG * 1000); 
   
-  delay(20); 
+  delay(100); 
 }
