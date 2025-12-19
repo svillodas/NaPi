@@ -1,5 +1,279 @@
 [
     {
+        "id": "c389bddfe0943252",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e97d0c325b4bc1a7",
+        "type": "inject",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "81024f7cc8abe473"
+            ]
+        ]
+    },
+    {
+        "id": "81024f7cc8abe473",
+        "type": "function",
+        "z": "c389bddfe0943252",
+        "name": "activar manualmente",
+        "func": "msg.payload = {alarm:true}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 460,
+        "wires": [
+            [
+                "ab2374cf1ad9b469"
+            ]
+        ]
+    },
+    {
+        "id": "1593d23257725635",
+        "type": "debug",
+        "z": "c389bddfe0943252",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 380,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e3609b8025860e57",
+        "type": "mqtt in",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "topic": "NAPI/SVZ",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f35dc2182fb15a8a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "1593d23257725635",
+                "92d53c36efe17a28"
+            ]
+        ]
+    },
+    {
+        "id": "ab2374cf1ad9b469",
+        "type": "mqtt out",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "topic": "NAPI/SVZ",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f35dc2182fb15a8a",
+        "x": 700,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "5848cacd1cabdbff",
+        "type": "ui-button",
+        "z": "c389bddfe0943252",
+        "group": "5748eb231942bf27",
+        "name": "",
+        "label": "Activar alarma",
+        "order": 1,
+        "width": 5,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "alarm",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 200,
+        "y": 500,
+        "wires": [
+            [
+                "81024f7cc8abe473"
+            ]
+        ]
+    },
+    {
+        "id": "3dd89f3ddaf3456c",
+        "type": "ui-button",
+        "z": "c389bddfe0943252",
+        "group": "5748eb231942bf27",
+        "name": "",
+        "label": "Desactivar alarma",
+        "order": 2,
+        "width": 5,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "cancel",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "red",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 210,
+        "y": 600,
+        "wires": [
+            [
+                "dccf08648b4d5312"
+            ]
+        ]
+    },
+    {
+        "id": "dccf08648b4d5312",
+        "type": "function",
+        "z": "c389bddfe0943252",
+        "name": "activar manualmente",
+        "func": "msg.payload = {alarm:false}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 600,
+        "wires": [
+            [
+                "ab2374cf1ad9b469"
+            ]
+        ]
+    },
+    {
+        "id": "bce5affe16584ec1",
+        "type": "ui-chart",
+        "z": "c389bddfe0943252",
+        "group": "5748eb231942bf27",
+        "name": "Pulso",
+        "label": "Pulso",
+        "order": 3,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload.pulse_val",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "bins": 10,
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "20",
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "100",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#a347e1",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 5,
+        "height": 8,
+        "className": "",
+        "interpolation": "linear",
+        "x": 770,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "d634400d7b4dc885",
         "type": "ui-chart",
         "z": "c389bddfe0943252",
@@ -62,6 +336,203 @@
         ]
     },
     {
+        "id": "92d53c36efe17a28",
+        "type": "switch",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "property": "payload.type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "DATA",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 370,
+        "y": 260,
+        "wires": [
+            [
+                "bce5affe16584ec1",
+                "d634400d7b4dc885",
+                "ba9498924a92f3cd",
+                "aafe2b78611734e5"
+            ]
+        ]
+    },
+    {
+        "id": "299a33b117a85fa5",
+        "type": "ui-notification",
+        "z": "c389bddfe0943252",
+        "ui": "1bfdfffe1709bea9",
+        "position": "top right",
+        "colorDefault": false,
+        "color": "#fa0000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "",
+        "allowConfirm": false,
+        "confirmText": "Confirm",
+        "raw": false,
+        "className": "",
+        "name": "Alerta",
+        "x": 990,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ba9498924a92f3cd",
+        "type": "switch",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "property": "payload.pulse_val",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "3000",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 590,
+        "y": 360,
+        "wires": [
+            [
+                "2ad8eb3bff706b1f"
+            ]
+        ]
+    },
+    {
+        "id": "aafe2b78611734e5",
+        "type": "switch",
+        "z": "c389bddfe0943252",
+        "name": "",
+        "property": "payload.g_force",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "3",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 590,
+        "y": 300,
+        "wires": [
+            [
+                "d9812e90b2bbb251"
+            ]
+        ]
+    },
+    {
+        "id": "52b37e266a3aaa5b",
+        "type": "ui-notification",
+        "z": "c389bddfe0943252",
+        "ui": "1bfdfffe1709bea9",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "allowConfirm": false,
+        "confirmText": "Confirm",
+        "raw": false,
+        "className": "",
+        "name": "Alerta",
+        "x": 990,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d9812e90b2bbb251",
+        "type": "function",
+        "z": "c389bddfe0943252",
+        "name": "aviso de caída",
+        "func": "msg.payload = \"CUIDADO CAÍDA\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 280,
+        "wires": [
+            [
+                "299a33b117a85fa5"
+            ]
+        ]
+    },
+    {
+        "id": "2ad8eb3bff706b1f",
+        "type": "function",
+        "z": "c389bddfe0943252",
+        "name": "aviso de pulso bajo",
+        "func": "msg.payload = \"CUIDADO PULSO BAJO\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 360,
+        "wires": [
+            [
+                "52b37e266a3aaa5b"
+            ]
+        ]
+    },
+    {
+        "id": "f35dc2182fb15a8a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "5748eb231942bf27",
         "type": "ui-group",
         "name": "NAPI IOT",
@@ -74,6 +545,26 @@
         "visible": "true",
         "disabled": "false",
         "groupType": "default"
+    },
+    {
+        "id": "1bfdfffe1709bea9",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
     },
     {
         "id": "560fc34a6d0ba989",
@@ -112,26 +603,6 @@
         "disabled": false
     },
     {
-        "id": "1bfdfffe1709bea9",
-        "type": "ui-base",
-        "name": "My Dashboard",
-        "path": "/dashboard",
-        "appIcon": "",
-        "includeClientData": true,
-        "acceptsClientConfig": [
-            "ui-notification",
-            "ui-control"
-        ],
-        "showPathInSidebar": false,
-        "headerContent": "page",
-        "navigationStyle": "default",
-        "titleBarStyle": "default",
-        "showReconnectNotification": true,
-        "notificationDisplayTime": 1,
-        "showDisconnectNotification": true,
-        "allowInstall": false
-    },
-    {
         "id": "fc0cd4f669023b63",
         "type": "ui-theme",
         "name": "Default Theme",
@@ -151,7 +622,7 @@
         }
     },
     {
-        "id": "f162fd580b7c517f",
+        "id": "35f88c5de6345a5b",
         "type": "global-config",
         "env": [],
         "modules": {
