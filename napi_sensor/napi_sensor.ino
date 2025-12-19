@@ -34,7 +34,7 @@ unsigned long lastMessageTime = 0;
 bool alarmActive = false; 
 
 unsigned long lastTelemetryTime = 0; 
-const int telemetryInterval = 200; // Enviar datos cada 200ms
+const int telemetryInterval = 1500; // Enviar datos cada 1500ms
 
 void setup_wifi() {
   delay(10);
@@ -148,5 +148,5 @@ void loop() {
   // Serial.print(",");
   // Serial.println(currentG * 1000); 
   
-  delay(100); 
+  delay(1000); 
 }
