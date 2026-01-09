@@ -1,89 +1,85 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <ArduinoJson.h> // libreria de Benoit Blanchon que hemos descargado para parsear los json
+#include <ArduinoJson.h>
 
 // --- CREDENCIALES WIFI ---
 const char* ssid = "DIOT37";      
 const char* password = "dispositivos37";  
 
-// --- CONFIGURACIÓN MQTT ---
-const char* mqtt_server = "broker.emqx.io";
+// --- CONFIGURACIÓN MQTT DUAL ---
+const char* mqtt_local_ip = "10.34.105.77";
+const char* mqtt_public_host = "broker.emqx.io";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "NAPI/SVZ"; 
 
-// --- DEFINICIÓN DE PINES---
+// --- VARIABLES DE ESTADO Y TIEMPO ---
+const char* current_broker = "";
+unsigned long lastRetryTime = 0; 
+const unsigned long retryInterval = 30000; 
+
+// --- VARIABLES PARA AUTO-APAGADO ---
+unsigned long alarmActivationTime = 0;
+const unsigned long alarmDuration = 10000;
+bool alarmActivate = false;
+
+// --- PINES ---
 const int pirPin = D3; 
 const int buzzerPin = D2; 
 
-// --- VARIABLES GLOBALES ---
 bool alarmArmed = false;
-
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// Función para conectar a WiFi
 void setup_wifi() {
   delay(10);
-  Serial.println();
-  Serial.print("Conectando a ");
+  Serial.print("\nConectando a ");
   Serial.println(ssid);
-  
   WiFi.begin(ssid, password);
-  
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+    delay(500); Serial.print(".");
   }
-  
-  Serial.println("");
-  Serial.println("WiFi conectada!");
-  Serial.println("IP: ");
-  Serial.println(WiFi.localIP());
+  Serial.println("\nWiFi conectada!");
 }
 
-// Función que recibe los mensajes MQTT
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Mensaje recibido en topic: ");
-  Serial.println(topic);
-
+  Serial.printf("Mensaje recibido en [%s]\n", topic);
   JsonDocument doc;
   DeserializationError error = deserializeJson(doc, payload, length);
-  if (error) {
-    Serial.print("Error al parsear JSON: ");
-    Serial.println(error.c_str());
-    return; 
-  }
-  if (doc.containsKey("alarm")) {
-    bool alarmStatus = doc["alarm"];
+  
+  if (error) return;
 
-    if (alarmStatus == true) {
-      alarmArmed = true;
-      Serial.println("-> COMANDO RECIBIDO: ALARMA ARMADA");
+  if (doc.containsKey("alarm")) {
+    alarmArmed = doc["alarm"];
+    if (alarmArmed) {
+      Serial.println("-> SISTEMA ARMADO");
     } else {
+      digitalWrite(buzzerPin, LOW);
       alarmArmed = false;
-      digitalWrite(buzzerPin, LOW); // Apagamos buzzer por si acaso estaba sonando
-      Serial.println("-> COMANDO RECIBIDO: ALARMA DESARMADA");
+      alarmActivate = false;
+      Serial.println("-> SISTEMA DESARMADO");
     }
-  } 
-  else {
-    Serial.println("El JSON recibido no tiene la clave 'alarm'");
   }
 }
 
-void reconnect() {
+void smartReconnect() {
   while (!client.connected()) {
-    Serial.print("Intentando conectar a broker MQTT...");
-    String clientId = "FireBeetle-";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "Actuador-" + String(random(0xffff), HEX);
+    client.setServer(mqtt_local_ip, mqtt_port);
     if (client.connect(clientId.c_str())) {
-      Serial.println("conectado!");
       client.subscribe(mqtt_topic);
-    } else {
-      Serial.print("falló, rc=");
-      Serial.print(client.state());
-      Serial.println(" intentando en 5 segundos");
-      delay(5000);
+      current_broker = mqtt_local_ip;
+      Serial.println("Conectado a Raspberry");
+      return; 
     }
+    client.setServer(mqtt_public_host, mqtt_port);
+    if (client.connect(clientId.c_str())) {
+      client.subscribe(mqtt_topic);
+      current_broker = mqtt_public_host;
+      lastRetryTime = millis();
+      Serial.println("Conectado a Broker Público");
+      return;
+    }
+    delay(5000);
   }
 }
 
@@ -92,20 +88,44 @@ void setup() {
   pinMode(pirPin, INPUT);
   digitalWrite(buzzerPin, LOW);
   Serial.begin(9600);
+  
   setup_wifi();
-  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
+  smartReconnect();
 }
 
 void loop() {
-  if (!client.connected())reconnect();
+  if (!client.connected()) {
+    smartReconnect();
+  }
+
+  if (current_broker == mqtt_public_host) {
+    if (millis() - lastRetryTime > retryInterval) {
+      client.disconnect(); 
+      lastRetryTime = millis();
+      return;
+    }
+  }
+
   client.loop();
-  // Leemos el sensor PIR (HIGH = movimiento detectado)
+
   int motionDetected = digitalRead(pirPin);
-  // Solo suena SI la alarma fue armada por MQTT Y hay movimiento
-  if (alarmArmed == true && motionDetected == HIGH) {
-    Serial.println("¡AYUDA CERCA! ACTIVANDO AVISOS!!! SOS!!!");
-    digitalWrite(buzzerPin, HIGH); // Suena el buzzer
-  } else digitalWrite(buzzerPin, LOW);
-  delay(100);
+  
+  // Activar si está armado, hay movimiento y NO estaba ya sonando
+  if (alarmArmed && motionDetected == HIGH && !alarmActivate) {
+    Serial.println("¡Movimiento detectado! Alarma activa por 10s.");
+    digitalWrite(buzzerPin, HIGH);
+    alarmActivationTime = millis();
+    alarmActivate = true;
+  }
+
+  // Apagar si el buzzer está activo y ya pasaron los 10 segundos
+  if (alarmActivate && (millis() - alarmActivationTime >= alarmDuration)) {
+    Serial.println("Tiempo cumplido. Apagando alarma.");
+    digitalWrite(buzzerPin, LOW);
+    alarmArmed = false;
+    alarmActivate = false;
+  }
+  
+  delay(10); 
 }
