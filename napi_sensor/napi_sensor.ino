@@ -7,38 +7,36 @@
 // --- CONFIGURACIÓN WIFI Y MQTT ---
 const char* ssid = "DIOT37";      
 const char* password = "dispositivos37";  
-const char* mqtt_server = "broker.emqx.io";
+const char* mqtt_local_ip = "10.124.207.77";
+const char* mqtt_public_host = "broker.emqx.io";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "NAPI/SVZ"; 
 
-// --- CONFIGURACIÓN PINES ---
+// --- VARIABLES DE ESTADO Y TIEMPO ---
+const char* current_broker = "";
+unsigned long lastRetryTime = 0; 
+const unsigned long retryInterval = 30000; // INTENTAR VOLVER A RASPBERRY CADA 30 SEGUNDOS
+
+// --- OBJETOS Y PINES ---
+WiFiClient espClient;
+PubSubClient client(espClient);
+MMA8452Q accel;
 const int pulsePin = A0; 
 const int buttonPin = D2; 
 
-// --- OBJETOS ---
-WiFiClient espClient;
-PubSubClient client(espClient);
-MMA8452Q accel; // Acelerómetro
-
-// --- VARIABLES PULSO ---
+// Variables sensores
 double alpha = 0.75;
 static double oldValue = 0;
 double filteredPulseValue = 0; 
-
-// --- VARIABLES CAÍDA ---
 float impactThreshold = 3.0; 
 float currentG = 0; 
-
-// --- CONTROL DE TIEMPO ---
 unsigned long lastMessageTime = 0;
-bool alarmActive = false; 
-
 unsigned long lastTelemetryTime = 0; 
-const int telemetryInterval = 1500; // Enviar datos cada 1500ms
+const int telemetryInterval = 1500;
 
 void setup_wifi() {
   delay(10);
-  Serial.println("Conectando a WiFi...");
+  Serial.print("Conectando a WiFi...");
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500); Serial.print(".");
@@ -46,35 +44,49 @@ void setup_wifi() {
   Serial.println("\nWiFi conectada");
 }
 
-void reconnect() {
+void smartReconnect() {
   while (!client.connected()) {
-    Serial.print("Conectando a MQTT...");
     String clientId = "MonitorSalud-" + String(random(0xffff), HEX);
+
+    // Raspberry Pi
+    Serial.println("Intentando conectar a Raspberry Pi...");
+    client.setServer(mqtt_local_ip, mqtt_port);
+    // Timeout corto de conexión para no bloquear mucho el dispositivo
     if (client.connect(clientId.c_str())) {
-      Serial.println("Conectado!");
-    } else {
-      delay(5000);
+      Serial.println("¡Conectado a la Raspberry Pi!");
+      current_broker = mqtt_local_ip;
+      return; 
     }
+
+    // Broker Público
+    Serial.println("Raspberry no disponible. Conectando a Broker Público...");
+    client.setServer(mqtt_public_host, mqtt_port);
+    if (client.connect(clientId.c_str())) {
+      Serial.println("¡Conectado al Broker Público!");
+      current_broker = mqtt_public_host;
+      lastRetryTime = millis(); // Empezamos a contar el tiempo para el próximo reintento local
+      return;
+    }
+
+    Serial.println("Fallo total de conexión. Reintentando en 5 segundos...");
+    delay(5000);
   }
 }
 
-// Función genérica para enviar alarmas
 void sendAlarm(String reason) {
-  // Verificamos que hayan pasado al menos 5 segundos desde la última alarma
-  // para evitar "spam" de mensajes si el usuario mantiene el botón presionado.
   if (millis() - lastMessageTime > 5000) { 
     JsonDocument doc;
-    doc["type"] = "ALARM"; // Etiqueta para diferenciar
+    doc["type"] = "ALARM";
     doc["alarm"] = true;
     doc["reason"] = reason;
+    doc["broker"] = (current_broker == mqtt_local_ip) ? "Raspberry" : "Publico";
 
     char buffer[256];
     serializeJson(doc, buffer);
     client.publish(mqtt_topic, buffer);
     
-    Serial.println(">> ALARMA ENVIADA: " + reason); // Debug en consola
+    Serial.println(">> ALARMA ENVIADA vía " + String(current_broker));
     lastMessageTime = millis();
-    alarmActive = true;
   }
 }
 
@@ -82,52 +94,58 @@ void sendTelemetry() {
     JsonDocument doc;
     doc["type"] = "DATA"; 
     doc["pulse_val"] = (int)filteredPulseValue; 
-    doc["g_force"] = currentG;                 
-
+    doc["g_force"] = currentG; 
+    
     char buffer[256];
     serializeJson(doc, buffer);
-    
     client.publish(mqtt_topic, buffer);
 }
 
 void setup() {
   Serial.begin(9600); 
   Wire.begin(); 
-  
-  // Configuración del botón
   pinMode(buttonPin, INPUT); 
   if (accel.init() == false) {
     Serial.println("Error: Acelerómetro");
     while (1);
   }
-
   setup_wifi();
-  client.setServer(mqtt_server, mqtt_port);
+  smartReconnect();
 }
 
 void loop() {
-  if (!client.connected()) reconnect();
+  // Verificar si estamos conectados
+  if (!client.connected()) {
+    smartReconnect();
+  }
+
+  // LÓGICA DE RETORNO A RASPBERRY
+  if (current_broker == mqtt_public_host) {
+    if (millis() - lastRetryTime > retryInterval) {
+      Serial.println("--- Tiempo de prueba cumplido. Intentando volver a Raspberry... ---");
+      client.disconnect(); // Forzamos desconexión para que el siguiente loop llame a smartReconnect
+      lastRetryTime = millis(); // Reiniciamos el contador
+      return; // Saltamos el resto del loop para ir directo a la reconexión
+    }
+  }
+
   client.loop();
 
-  // --- LECTURA DE SENSORES ---
+  // --- Procesamiento de Sensores ---
   int rawValue = analogRead(pulsePin);
-  
-  // Fórmula del filtro paso bajo
   filteredPulseValue = alpha * oldValue + (1 - alpha) * rawValue;
   oldValue = rawValue;
   
   if (accel.available()) {
     accel.read();
-    // Pitágoras: magnitud del vector
     currentG = sqrt(pow(accel.cx, 2) + pow(accel.cy, 2) + pow(accel.cz, 2));
   }
 
-  // --- LECTURA DEL BOTÓN DE PÁNICO ---
+  // --- Acciones ---
   if (digitalRead(buttonPin) == LOW) {
       sendAlarm("ALERTA_MANUAL"); 
   }
 
-  // --- LÓGICA DE ALARMAS AUTOMÁTICAS ---
   if (filteredPulseValue < 1000) { 
       sendAlarm("PULSO_PERDIDO");
   }
@@ -135,18 +153,10 @@ void loop() {
       sendAlarm("CAIDA_DETECTADA");
   }
 
-  // --- ENVÍO DE TELEMETRÍA ---
   if (millis() - lastTelemetryTime > telemetryInterval) {
       sendTelemetry();
       lastTelemetryTime = millis();
   }
 
-  // VISUALIZACIÓN LOCAL (Serial Plotter)
-  // Serial.print(rawValue);          
-  // Serial.print(",");               
-  // Serial.print(filteredPulseValue);
-  // Serial.print(",");
-  // Serial.println(currentG * 1000); 
-  
-  delay(1000); 
+  delay(10);
 }
