@@ -7,7 +7,7 @@
 // --- CONFIGURACIÓN WIFI Y MQTT ---
 const char* ssid = "DIOT37";      
 const char* password = "dispositivos37";  
-const char* mqtt_local_ip = "10.124.207.77";
+const char* mqtt_local_ip = "10.34.105.77";
 const char* mqtt_public_host = "broker.emqx.io";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "NAPI/SVZ"; 

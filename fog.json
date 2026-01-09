@@ -1,16 +1,16 @@
 [
     {
-        "id": "c389bddfe0943252",
+        "id": "0b4d5c69f2b143b0",
         "type": "tab",
         "label": "Flow 4",
-        "disabled": false,
+        "disabled": true,
         "info": "",
         "env": []
     },
     {
-        "id": "e97d0c325b4bc1a7",
+        "id": "e81963747311d8d9",
         "type": "inject",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "",
         "props": [
             {
@@ -32,16 +32,16 @@
         "y": 420,
         "wires": [
             [
-                "81024f7cc8abe473"
+                "1197a99dfaa26fae"
             ]
         ]
     },
     {
-        "id": "81024f7cc8abe473",
+        "id": "1197a99dfaa26fae",
         "type": "function",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "activar manualmente",
-        "func": "msg.payload = {alarm:true, cloud:true}\nreturn msg;",
+        "func": "msg.payload = {alarm:true}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -52,14 +52,15 @@
         "y": 460,
         "wires": [
             [
-                "ab2374cf1ad9b469"
+                "e025af428d1ec44f",
+                "6acc2eef44fd1a0f"
             ]
         ]
     },
     {
-        "id": "1593d23257725635",
+        "id": "e9b20e9137cb87a7",
         "type": "debug",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "debug",
         "active": true,
         "tosidebar": true,
@@ -69,37 +70,38 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 380,
+        "x": 440,
         "y": 80,
         "wires": []
     },
     {
-        "id": "e3609b8025860e57",
+        "id": "30976b52840c84cf",
         "type": "mqtt in",
-        "z": "c389bddfe0943252",
-        "name": "",
+        "z": "0b4d5c69f2b143b0",
+        "name": "Fog",
         "topic": "NAPI/SVZ",
         "qos": "2",
         "datatype": "auto-detect",
-        "broker": "f35dc2182fb15a8a",
+        "broker": "f90e27a6ed72e9b2",
         "nl": false,
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 140,
+        "x": 110,
         "y": 140,
         "wires": [
             [
-                "1593d23257725635",
-                "92d53c36efe17a28"
+                "e9b20e9137cb87a7",
+                "d21bbec334bad5c5",
+                "01fc8ea1fc737d6b"
             ]
         ]
     },
     {
-        "id": "ab2374cf1ad9b469",
+        "id": "e025af428d1ec44f",
         "type": "mqtt out",
-        "z": "c389bddfe0943252",
-        "name": "",
+        "z": "0b4d5c69f2b143b0",
+        "name": "cloud",
         "topic": "NAPI/SVZ",
         "qos": "2",
         "retain": "",
@@ -108,19 +110,19 @@
         "userProps": "",
         "correl": "",
         "expiry": "",
-        "broker": "f35dc2182fb15a8a",
-        "x": 700,
-        "y": 520,
+        "broker": "bbb9bbade4baa80a",
+        "x": 870,
+        "y": 480,
         "wires": []
     },
     {
-        "id": "5848cacd1cabdbff",
+        "id": "07a83a8d6942c3e5",
         "type": "ui-button",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "group": "5748eb231942bf27",
         "name": "",
         "label": "Activar alarma",
-        "order": 1,
+        "order": 2,
         "width": 5,
         "height": 0,
         "emulateClick": false,
@@ -148,18 +150,18 @@
         "y": 500,
         "wires": [
             [
-                "81024f7cc8abe473"
+                "1197a99dfaa26fae"
             ]
         ]
     },
     {
-        "id": "3dd89f3ddaf3456c",
+        "id": "070612792b657f15",
         "type": "ui-button",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "group": "5748eb231942bf27",
         "name": "",
         "label": "Desactivar alarma",
-        "order": 8,
+        "order": 3,
         "width": 5,
         "height": 0,
         "emulateClick": false,
@@ -187,38 +189,39 @@
         "y": 600,
         "wires": [
             [
-                "dccf08648b4d5312"
+                "4b04681a3aece962"
             ]
         ]
     },
     {
-        "id": "dccf08648b4d5312",
+        "id": "4b04681a3aece962",
         "type": "function",
-        "z": "c389bddfe0943252",
-        "name": "Desactivar manualmente",
-        "func": "msg.payload = {alarm:false, cloud:true}\nreturn msg;",
+        "z": "0b4d5c69f2b143b0",
+        "name": "desactivar manualmente",
+        "func": "msg.payload = {alarm:false}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 470,
+        "x": 450,
         "y": 600,
         "wires": [
             [
-                "ab2374cf1ad9b469"
+                "e025af428d1ec44f",
+                "6acc2eef44fd1a0f"
             ]
         ]
     },
     {
-        "id": "bce5affe16584ec1",
+        "id": "1a0046fcf0a11cb5",
         "type": "ui-chart",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "group": "5748eb231942bf27",
         "name": "Pulso",
         "label": "Pulso",
-        "order": 6,
+        "order": 4,
         "chartType": "line",
         "category": "topic",
         "categoryType": "msg",
@@ -267,20 +270,20 @@
         "height": 8,
         "className": "",
         "interpolation": "linear",
-        "x": 770,
-        "y": 100,
+        "x": 890,
+        "y": 60,
         "wires": [
             []
         ]
     },
     {
-        "id": "d634400d7b4dc885",
+        "id": "159d99510a86afbe",
         "type": "ui-chart",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "group": "5748eb231942bf27",
         "name": "Fuerzas G",
         "label": "Fuerzas G",
-        "order": 7,
+        "order": 5,
         "chartType": "line",
         "category": "topic",
         "categoryType": "msg",
@@ -329,16 +332,16 @@
         "height": 8,
         "className": "",
         "interpolation": "linear",
-        "x": 790,
-        "y": 180,
+        "x": 910,
+        "y": 140,
         "wires": [
             []
         ]
     },
     {
-        "id": "92d53c36efe17a28",
+        "id": "d21bbec334bad5c5",
         "type": "switch",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "",
         "property": "payload.type",
         "propertyType": "msg",
@@ -352,21 +355,21 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 370,
-        "y": 260,
+        "x": 350,
+        "y": 200,
         "wires": [
             [
-                "bce5affe16584ec1",
-                "d634400d7b4dc885",
-                "ba9498924a92f3cd",
-                "aafe2b78611734e5"
+                "1a0046fcf0a11cb5",
+                "159d99510a86afbe",
+                "8fe6be964f8c2032",
+                "403e502f0c51cb62"
             ]
         ]
     },
     {
-        "id": "299a33b117a85fa5",
+        "id": "de683a9b552c9eb3",
         "type": "ui-notification",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "ui": "1bfdfffe1709bea9",
         "position": "top right",
         "colorDefault": false,
@@ -381,16 +384,16 @@
         "raw": false,
         "className": "",
         "name": "Alerta",
-        "x": 990,
-        "y": 260,
+        "x": 1110,
+        "y": 220,
         "wires": [
             []
         ]
     },
     {
-        "id": "ba9498924a92f3cd",
+        "id": "8fe6be964f8c2032",
         "type": "switch",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "",
         "property": "payload.pulse_val",
         "propertyType": "msg",
@@ -404,18 +407,18 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 590,
-        "y": 360,
+        "x": 710,
+        "y": 320,
         "wires": [
             [
-                "2ad8eb3bff706b1f"
+                "0636b4598c3107ad"
             ]
         ]
     },
     {
-        "id": "aafe2b78611734e5",
+        "id": "403e502f0c51cb62",
         "type": "switch",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "",
         "property": "payload.g_force",
         "propertyType": "msg",
@@ -429,18 +432,18 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 590,
-        "y": 300,
+        "x": 710,
+        "y": 260,
         "wires": [
             [
-                "d9812e90b2bbb251"
+                "f49278a9582d133d"
             ]
         ]
     },
     {
-        "id": "52b37e266a3aaa5b",
+        "id": "d5c41b2db9e51587",
         "type": "ui-notification",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "ui": "1bfdfffe1709bea9",
         "position": "top right",
         "colorDefault": true,
@@ -455,16 +458,16 @@
         "raw": false,
         "className": "",
         "name": "Alerta",
-        "x": 990,
-        "y": 360,
+        "x": 1110,
+        "y": 320,
         "wires": [
             []
         ]
     },
     {
-        "id": "d9812e90b2bbb251",
+        "id": "f49278a9582d133d",
         "type": "function",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "aviso de caída",
         "func": "msg.payload = \"CUIDADO CAÍDA\"\nreturn msg;",
         "outputs": 1,
@@ -473,18 +476,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
-        "y": 280,
+        "x": 900,
+        "y": 240,
         "wires": [
             [
-                "299a33b117a85fa5"
+                "de683a9b552c9eb3"
             ]
         ]
     },
     {
-        "id": "2ad8eb3bff706b1f",
+        "id": "0636b4598c3107ad",
         "type": "function",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "aviso de pulso bajo",
         "func": "msg.payload = \"CUIDADO PULSO BAJO\"\nreturn msg;",
         "outputs": 1,
@@ -493,18 +496,138 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 790,
-        "y": 360,
+        "x": 910,
+        "y": 320,
         "wires": [
             [
-                "52b37e266a3aaa5b"
+                "d5c41b2db9e51587"
             ]
         ]
     },
     {
-        "id": "ac8488749cf07a75",
+        "id": "26e9587f6b8d07ad",
+        "type": "mqtt out",
+        "z": "0b4d5c69f2b143b0",
+        "name": "",
+        "topic": "NAPI/SVZ",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bbb9bbade4baa80a",
+        "x": 520,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "6acc2eef44fd1a0f",
+        "type": "mqtt out",
+        "z": "0b4d5c69f2b143b0",
+        "name": "Fog",
+        "topic": "NAPI/SVZ",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f90e27a6ed72e9b2",
+        "x": 870,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "01f344ecfdeedfb8",
+        "type": "mqtt in",
+        "z": "0b4d5c69f2b143b0",
+        "name": "Cloud",
+        "topic": "NAPI/SVZ",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "8dc6f6f7d61b0750",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 700,
+        "wires": [
+            [
+                "f42a70da66ae4a41"
+            ]
+        ]
+    },
+    {
+        "id": "01fc8ea1fc737d6b",
+        "type": "switch",
+        "z": "0b4d5c69f2b143b0",
+        "name": "",
+        "property": "payload.cloud",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 310,
+        "y": 300,
+        "wires": [
+            [
+                "26e9587f6b8d07ad"
+            ]
+        ]
+    },
+    {
+        "id": "f42a70da66ae4a41",
+        "type": "switch",
+        "z": "0b4d5c69f2b143b0",
+        "name": "",
+        "property": "payload.cloud",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 660,
+        "wires": [
+            [
+                "6acc2eef44fd1a0f",
+                "265c0dec738b93b7"
+            ]
+        ]
+    },
+    {
+        "id": "265c0dec738b93b7",
+        "type": "debug",
+        "z": "0b4d5c69f2b143b0",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "00201d3fdbefda3c",
         "type": "inject",
-        "z": "c389bddfe0943252",
+        "z": "0b4d5c69f2b143b0",
         "name": "",
         "props": [
             {
@@ -522,16 +645,47 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 220,
-        "y": 680,
+        "x": 235,
+        "y": 558.75,
         "wires": [
             [
-                "dccf08648b4d5312"
+                "4b04681a3aece962"
             ]
         ]
     },
     {
-        "id": "f35dc2182fb15a8a",
+        "id": "f90e27a6ed72e9b2",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "10.34.105.77",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "bbb9bbade4baa80a",
         "type": "mqtt-broker",
         "name": "",
         "broker": "broker.emqx.io",
@@ -596,6 +750,37 @@
         "allowInstall": false
     },
     {
+        "id": "8dc6f6f7d61b0750",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "560fc34a6d0ba989",
         "type": "ui-page",
         "name": "NAPI",
@@ -651,7 +836,7 @@
         }
     },
     {
-        "id": "ea486c7482a9cbf3",
+        "id": "ade7e939c0cbf85f",
         "type": "global-config",
         "env": [],
         "modules": {
