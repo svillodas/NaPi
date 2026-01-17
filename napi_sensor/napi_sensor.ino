@@ -8,7 +8,7 @@
 const char* ssid = "DIOT37";      
 const char* password = "dispositivos37";  
 const char* mqtt_local_ip = "10.34.105.77";
-const char* mqtt_public_host = "broker.emqx.io";
+const char* mqtt_cloudlet_host = "10.34.105.78";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "NAPI/SVZ"; 
 
@@ -60,10 +60,10 @@ void smartReconnect() {
 
     // Broker Público
     Serial.println("Raspberry no disponible. Conectando a Broker Público...");
-    client.setServer(mqtt_public_host, mqtt_port);
+    client.setServer(mqtt_cloudlet_host, mqtt_port);
     if (client.connect(clientId.c_str())) {
       Serial.println("¡Conectado al Broker Público!");
-      current_broker = mqtt_public_host;
+      current_broker = mqtt_cloudlet_host;
       lastRetryTime = millis(); // Empezamos a contar el tiempo para el próximo reintento local
       return;
     }
@@ -120,7 +120,7 @@ void loop() {
   }
 
   // LÓGICA DE RETORNO A RASPBERRY
-  if (current_broker == mqtt_public_host) {
+  if (current_broker == mqtt_cloudlet_host) {
     if (millis() - lastRetryTime > retryInterval) {
       Serial.println("--- Tiempo de prueba cumplido. Intentando volver a Raspberry... ---");
       client.disconnect(); // Forzamos desconexión para que el siguiente loop llame a smartReconnect

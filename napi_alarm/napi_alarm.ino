@@ -7,8 +7,8 @@ const char* ssid = "DIOT37";
 const char* password = "dispositivos37";  
 
 // --- CONFIGURACIÓN MQTT DUAL ---
-const char* mqtt_local_ip = "10.34.105.77";
-const char* mqtt_public_host = "broker.emqx.io";
+const char* mqtt_fog_host = "10.34.105.77";
+const char* mqtt_cloudlet_host = "10.34.105.78";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "NAPI/SVZ"; 
 
@@ -64,17 +64,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void smartReconnect() {
   while (!client.connected()) {
     String clientId = "Actuador-" + String(random(0xffff), HEX);
-    client.setServer(mqtt_local_ip, mqtt_port);
+    client.setServer(mqtt_fog_host, mqtt_port);
     if (client.connect(clientId.c_str())) {
       client.subscribe(mqtt_topic);
-      current_broker = mqtt_local_ip;
+      current_broker = mqtt_fog_host;
       Serial.println("Conectado a Raspberry");
       return; 
     }
-    client.setServer(mqtt_public_host, mqtt_port);
+    client.setServer(mqtt_cloudlet_host, mqtt_port);
     if (client.connect(clientId.c_str())) {
       client.subscribe(mqtt_topic);
-      current_broker = mqtt_public_host;
+      current_broker = mqtt_cloudlet_host;
       lastRetryTime = millis();
       Serial.println("Conectado a Broker Público");
       return;
@@ -99,7 +99,7 @@ void loop() {
     smartReconnect();
   }
 
-  if (current_broker == mqtt_public_host) {
+  if (current_broker == mqtt_cloudlet_host) {
     if (millis() - lastRetryTime > retryInterval) {
       client.disconnect(); 
       lastRetryTime = millis();
